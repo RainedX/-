@@ -22,4 +22,8 @@ html, body, #app {
   margin: 0;
   padding: 0;
 }
+.echarts {
+  width: 100% !important;
+  height: 100% !important;
+}
 </style>
