@@ -41,6 +41,7 @@
       </template>
       <template>
         <div class="sales-view-chart-wrapper">
+          <v-chart :options="chartOptions" />
           <div class="sales-view-list">
             <div class="sales-view-title">排行榜</div>
             <div class="list-item-wrapper">
@@ -99,19 +100,86 @@ export default {
           },
         ],
       },
-      chartOption: {},
+      chartOptions: {
+        color: '#2672ff',
+        title: {
+          text: '年度销售额',
+          textStyle: {
+            fontSize: 12,
+            color: '#666'
+          },
+          left: 25,
+          top: 20
+        },
+        xAxis: {
+          type: 'category',
+          axisTick: {
+            alignWithLabel: true,
+            lineStyle: {
+              color: '#999'
+            }
+          },
+          axisLine: {
+            lineStyle: {
+              color: '#999'
+            }
+          },
+          axisLabel: {
+            color: '#333'
+          },
+          data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月','8月', '9月','10月','11月','12月']
+        },
+        yAxis: {
+          type: 'value',
+          axisLine: {
+            show: false
+          },
+          axisTick: {
+            show: false
+          },
+          splitLine: {
+            lineStyle: {
+              type: 'dotted',
+              color: '#eee'
+            }
+          },
+          data: [100, 200, 300, 400, 500]
+        },
+        grid: {
+          top: 70,
+          left: 60,
+          right: 60,
+          bottom: 50
+        },
+        series: [
+          {
+            type: 'bar',
+            barWidth: '35%',
+            data: [400, 80, 200, 320, 380, 310, 220, 150, 80, 200, 120, 290]
+          }
+        ]
+      },
     };
   },
   computed: {
     rankData() {
-      return [];
+      return [
+        { no: 1, name: '麦当劳', money: '323,234' },
+        { no: 2, name: '麦当劳', money: '323,234' },
+        { no: 3, name: '麦当劳', money: '323,234' },
+        { no: 4, name: '麦当劳', money: '323,234' },
+        { no: 5, name: '麦当劳', money: '323,234' },
+      ];
     },
   },
   methods: {
-    onMenuSelect() {},
+    onMenuSelect(index) {
+      this.activeIndex = index;
+    },
   },
 };
 </script>
+
 <style lang="scss" scoped>
 .sales-view {
   margin-top: 20px;
@@ -145,6 +213,7 @@ export default {
       }
     }
   }
+
   .sales-view-chart-wrapper {
     display: flex;
     height: 270px;
