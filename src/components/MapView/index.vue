@@ -1,5 +1,5 @@
 <template>
-  <div></div>
+   <div class="map-view"></div>
 </template>
 
 <script>
@@ -9,3 +9,9 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.map-view {
+  display: flex;
+  margin-top: 20px;
+}
+</style>
