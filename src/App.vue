@@ -22,4 +22,7 @@ html, body, #app {
   width: 100% !important;
   height: 100% !important;
 }
+.anchorBL{
+    display:none;
+}
 </style>
