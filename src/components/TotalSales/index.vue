@@ -4,31 +4,32 @@
       <div class="compare-wrapper">
         <div class="compare">
           <span>日同比</span>
-          <span class="emphasis">7.33%</span>
+          <span class="emphasis">{{ salesGrowthLastDay }}</span>
           <div class="increase"></div>
         </div>
         <div class="compare">
           <span>月同比</span>
-          <span class="emphasis">38.79%</span>
+          <span class="emphasis">{{ salesGrowthLastMonth }}</span>
           <div class="decrease"></div>
         </div>
       </div>
     </template>
     <template v-slot:footer>
       <span>昨日销售额 </span>
-      <span class="emphasis">¥ 30,000,000</span>
+      <span class="emphasis">{{ salesLastDay }}</span>
     </template>
   </common-card>
 </template>
 
 <script>
-import commonCardMixin from '@/mixin/commonCardMixin.js';
+import commonCardMixin from '@/mixin/commonCardMixin';
+import commonDataMixin from '@/mixin/commonDataMixin';
 
 export default {
   data() {
     return {};
   },
-  mixins: [commonCardMixin],
+  mixins: [commonCardMixin, commonDataMixin],
 };
 </script>
 <style lang="scss" scoped>

@@ -1,26 +1,27 @@
 <template>
   <common-card
     title="今日交易用户数"
-    value="81,014"
+    :value="orderUser"
   >
     <template>
       <v-chart :options="getOptions()"></v-chart>
     </template>
     <template v-slot:footer>
       <span>退货率 </span>
-      <span class="emphasis">5.14%</span>
+      <span class="emphasis">{{ returnRate }}</span>
     </template>
   </common-card>
 </template>
 
 <script>
-import commonCardMixin from '@/mixin/commonCardMixin.js';
+import commonCardMixin from '@/mixin/commonCardMixin';
+import commonDataMixin from '@/mixin/commonDataMixin';
 
 export default {
   data() {
     return {};
   },
-  mixins: [commonCardMixin],
+  mixins: [commonCardMixin, commonDataMixin],
   mounted() {},
   methods: {
     getOptions() {
@@ -31,17 +32,7 @@ export default {
         },
         xAxis: {
           type: 'category',
-          data: [
-            '00:00',
-            '01:00',
-            '02:00',
-            '03:00',
-            '04:00',
-            '05:00',
-            '06:00',
-            '07:00',
-            '08:00',
-          ],
+          data: this.orderUserTrendAxis,
           show: false,
           boundaryGap: false,
         },
@@ -56,7 +47,7 @@ export default {
         },
         series: [
           {
-            data: [120, 200, 150, 80, 70, 110, 130, 45, 76],
+            data: this.orderUserTrend,
             type: 'bar',
             barWidth: '60%',
           },

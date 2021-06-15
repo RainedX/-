@@ -10,12 +10,12 @@
             <div class="chart-inner">
               <div class="chart">
                 <div class="chart-title">搜索用户数</div>
-                <div class="chart-data">{{userCount}}</div>
+                <div class="chart-data">{{ userCount }}</div>
                 <v-chart :options="searchUserOption" class="user-chart" />
               </div>
               <div class="chart">
                 <div class="chart-title">搜索量</div>
-                <div class="chart-data">{{searchCount}}</div>
+                <div class="chart-data">{{ searchCount }}</div>
                 <v-chart :options="searchNumberOption" class="num-chart" />
               </div>
             </div>
@@ -39,13 +39,17 @@
         </template>
       </el-card>
     </div>
-     <div class="view">
-       <el-card shadow="hover">
+    <div class="view">
+      <el-card shadow="hover">
         <template v-slot:header>
           <div class="title-wrapper">
             <div class="title">分类销售排行</div>
             <div class="radio-wrapper">
-              <el-radio-group v-model="radioSelect" size="small" @change="onCategoryChange">
+              <el-radio-group
+                v-model="radioSelect"
+                size="small"
+                @change="onCategoryChange"
+              >
                 <el-radio-button label="品类"></el-radio-button>
                 <el-radio-button label="商品"></el-radio-button>
               </el-radio-group>
@@ -58,30 +62,36 @@
           </div>
         </template>
       </el-card>
-     </div>
+    </div>
   </div>
 </template>
 
 <script>
+import commonDataMixin from '@/mixin/commonDataMixin';
+const colors = [
+  '#8d7fec',
+  '#5085f2',
+  '#f8726b',
+  '#e7e702',
+  '#78f283',
+  '#4bc1fc',
+];
+
 export default {
+  mixins: [commonDataMixin],
   data() {
     return {
       searchUserOption: {},
       searchNumberOption: {},
-      tableData: [
-        {rank: 1, keyword: '小龙虾', count: 9195, users: 7287, range: '10%'},
-        {rank: 2, keyword: '送药', count: 2125, users: 4285, range: '20%'},
-        {rank: 3, keyword: '医疗', count: 4195, users: 2287, range: '30%'},
-        {rank: 4, keyword: '买家', count: 6195, users: 6280, range: '40%'}
-      ],
+      tableData: [],
       totalData: [],
       total: 0,
       pageSize: 4,
-      userCount: "93,634",
-      searchCount: "198,782",
+      userCount: 0,
+      searchCount: 0,
       radioSelect: '品类',
       categoryOptions: {},
-    }
+    };
   },
   mounted() {
     this.renderLineChart();
@@ -89,100 +99,119 @@ export default {
   },
   methods: {
     onPageChange(page) {
-      this.renderTable(page)
+      this.renderTable(page);
     },
-    renderTable() {},
-    onCategoryChange() {},
+    renderTable(page) {
+      this.tableData = this.totalData.slice(
+        (page - 1) * this.pageSize,
+        (page - 1) * this.pageSize + this.pageSize,
+      );
+    },
+    onCategoryChange(type) {
+      this.radioSelect = type;
+      this.renderPieChart();
+    },
     renderLineChart() {
-      const createOption = (key) => {
-        const data = [42, 31, 46, 65, 66, 33, 99, 12]
-        const axis = [1, 2, 3, 4, 5, 6, 7, 8]
+      const createOption = key => {
+        const data = [];
+        const axis = [];
+        this.wordCloud.forEach(item => data.push(item[key]));
+        this.wordCloud.forEach(item => axis.push(item.word));
         return {
           xAxis: {
             type: 'category',
             boundaryGap: false,
-            data: axis
+            data: axis,
           },
           yAxis: {
-            show: false
+            show: false,
           },
-          grid: {
-            left: 0,
-            top: 0,
-            right: 0,
-            bottom: 0
-          },
+          tooltip: {},
           series: [
             {
               type: 'line',
               data,
               areaStyle: {
-                color: 'rgba(95,187,255,.5)'
+                color: 'rgba(95,187,255,.5)',
               },
               lineStyle: {
-                color: 'rgb(95,187,255)'
+                color: 'rgb(95,187,255)',
               },
               itemStyle: {
-                opacity: 0
+                opacity: 0,
               },
-              smooth: true
-            }
-          ]
-        }
+              smooth: true,
+            },
+          ],
+          grid: {
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+          },
+        };
+      };
+      if (this.wordCloud) {
+        this.searchUserOption = createOption('user');
+        this.searchNumberOption = createOption('count');
       }
-      this.searchUserOption = createOption('user')
-      this.searchNumberOption = createOption('count')
     },
     renderPieChart() {
-      const mockData = [
-        {
-          legendName: "粉面粥店",
-          value: 67,
-          percent: '15.40%',
+      if (!this.category1.data1 || !this.category2.data1) {
+        return;
+      }
+      let data;
+      let axis;
+      let total = 0;
+      if (this.radioSelect === '品类') {
+        data = this.category1.data1.slice(0, 6);
+        axis = this.category1.axisX.slice(0, 6);
+        total = data.reduce((s, i) => s + i, 0);
+      } else {
+        data = this.category2.data1.slice(0, 6);
+        axis = this.category2.axisX.slice(0, 6);
+        total = data.reduce((s, i) => s + i, 0);
+      }
+      const chartData = [];
+      data.forEach((item, index) => {
+        const percent = `${((item / total) * 100).toFixed(2)}%`;
+        chartData.push({
+          legendName: axis[index],
+          value: item,
+          percent,
           itemStyle: {
-            color: '#2672ff'
+            color: colors[index],
           },
-          name: '粉面粥店 | 15.40%'
-        },
-        {
-          legendName: "简餐便当",
-          value: 97,
-          percent: '22.30%',
-          itemStyle: {
-              color: '#8d7fec'
-          },
-          name: '简餐便当 | 22.30%'
-        },
-        {
-          legendName: "汉堡披萨",
-          value: 92,
-          percent: '21.30%',
-          itemStyle: {
-            color: '#e73'
-          },
-          name: '汉堡披萨 | 21.30%'
-        }
-      ]
+          name: `${axis[index]} | ${percent}`,
+        });
+      });
       this.categoryOptions = {
         tooltip: {
           trigger: 'item',
           formatter(params) {
-            const str = params.seriesName + '<br />' +
-                params.marker + params.data.legendName + '<br />' +
-                '数量：' + params.data.value + '<br />' +
-                '占比：' + params.data.percent + '%'
-              return str
-          }
+            const str =
+              params.seriesName +
+              '<br />' +
+              params.marker +
+              params.data.legendName +
+              '<br />' +
+              '数量：' +
+              params.data.value +
+              '<br />' +
+              '占比：' +
+              params.data.percent;
+            return str;
+          },
         },
         title: [
           {
-          text: '品类分布',
-          textStyle: {
-            fontSize: 14,
-            color: '#666'
-          },
-          left: 20,
-          top: 20
+            text: `${this.radioSelect}分布`,
+            textStyle: {
+              fontSize: 14,
+              color: '#666',
+            },
+            left: 20,
+            top: 20,
           },
           {
             text: '累计订单量',
@@ -192,34 +221,34 @@ export default {
             textAlign: 'center',
             textStyle: {
               fontSize: 14,
-              color: '#999'
+              color: '#999',
             },
             subtextStyle: {
               fontSize: 28,
-              color: '#333'
+              color: '#333',
             },
-          }
+          },
         ],
         legend: {
           type: 'scroll',
           orient: 'vertical',
           height: 250,
-          left: '65%',
+          left: '70%',
           top: 'middle',
           textStyle: {
-            color: '#8c8c8c'
-          }
+            color: '#8c8c8c',
+          },
         },
         series: [
           {
             type: 'pie',
-            data: mockData,
+            data: chartData,
             label: {
               show: true,
               position: 'outside',
               formatter(params) {
-                return params.data.legendName
-              }
+                return params.data.legendName;
+              },
             },
             name: '品类分布',
             center: ['35%', '50%'],
@@ -227,99 +256,124 @@ export default {
             labelLine: {
               length: 5,
               length2: 3,
-              smooth: true
+              smooth: true,
             },
             itemStyle: {
               borderWidth: 4,
-              borderColor: '#fff'
-            }
+              borderColor: '#fff',
+            },
+          },
+        ],
+      };
+    },
+  },
+  watch: {
+    wordCloud() {
+      const totalData = [];
+      this.wordCloud.forEach((item, index) => {
+        totalData.push({
+          id: index + 1,
+          rank: index + 1,
+          keyword: item.word,
+          count: item.count,
+          users: item.user,
+          range: `${((item.user / item.count) * 100).toFixed(2)}%`,
+        });
+      });
+      this.totalData = totalData;
+      this.total = this.totalData.length;
+      this.renderTable(1);
+      this.userCount = totalData.reduce((s, i) => i.users + s, 0);
+      this.searchCount = totalData.reduce((s, i) => i.count + s, 0);
+      this.renderLineChart();
+    },
+    category1() {
+      this.renderPieChart();
+    },
+  },
+};
+</script>
+<style lang="scss" scoped>
+.bottom-view {
+  display: flex;
+  margin-top: 20px;
+
+  .view {
+    flex: 1;
+    width: 50%;
+    box-sizing: border-box;
+
+    &:first-child {
+      padding: 0 10px 0 0;
+    }
+
+    &:last-child {
+      padding: 0 0 0 10px;
+    }
+
+    .title-wrapper {
+      display: flex;
+      align-items: center;
+      height: 60px;
+      box-sizing: border-box;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 0 0 0 20px;
+
+      .radio-wrapper {
+        flex: 1;
+        display: flex;
+        justify-content: flex-end;
+        padding-right: 20px;
+      }
+    }
+
+    .chart-wrapper {
+      display: flex;
+      flex-direction: column;
+      height: 452px;
+
+      .chart-inner {
+        display: flex;
+        padding: 0 10px;
+        margin-top: 20px;
+
+        .chart {
+          flex: 1;
+          padding: 0 10px;
+
+          .chart-title {
+            color: #999;
+            font-size: 14px;
           }
-        ]
+
+          .chart-data {
+            font-size: 22px;
+            color: #333;
+            font-weight: 500;
+            letter-spacing: 2px;
+          }
+
+          .user-chart,
+          .num-chart {
+            height: 50px !important;
+          }
+        }
+      }
+
+      .table-wrapper {
+        flex: 1;
+        margin-top: 20px;
+        padding: 0 20px 20px;
+
+        .el-pagination {
+          display: flex;
+          justify-content: flex-end;
+          margin-top: 15px;
+        }
       }
     }
   }
 }
-</script>
-<style lang="scss" scoped>
-  .bottom-view {
-    display: flex;
-    margin-top: 20px;
-
-    .view {
-      flex: 1;
-      width: 50%;
-      box-sizing: border-box;
-
-      &:first-child {
-        padding: 0 10px 0 0;
-      }
-
-      &:last-child {
-        padding: 0 0 0 10px;
-      }
-
-      .title-wrapper {
-        display: flex;
-        align-items: center;
-        height: 60px;
-        box-sizing: border-box;
-        border-bottom: 1px solid #eee;
-        font-size: 14px;
-        font-weight: 500;
-        padding: 0 0 0 20px;
-
-        .radio-wrapper {
-          flex: 1;
-          display: flex;
-          justify-content: flex-end;
-          padding-right: 20px;
-        }
-      }
-
-      .chart-wrapper {
-        display: flex;
-        flex-direction: column;
-        height: 452px;
-
-        .chart-inner {
-          display: flex;
-          padding: 0 10px;
-          margin-top: 20px;
-
-          .chart {
-            flex: 1;
-            padding: 0 10px;
-
-            .chart-title {
-              color: #999;
-              font-size: 14px;
-            }
-
-            .chart-data {
-              font-size: 22px;
-              color: #333;
-              font-weight: 500;
-              letter-spacing: 2px;
-            }
-
-            .user-chart, .num-chart {
-              height: 50px !important;
-            }
-          }
-        }
-
-        .table-wrapper {
-          flex: 1;
-          margin-top: 20px;
-          padding: 0 20px 20px;
-
-          .el-pagination {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 15px;
-          }
-        }
-      }
-    }
-  }
 </style>

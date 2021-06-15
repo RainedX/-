@@ -19,7 +19,7 @@ export default {
   },
   props: {
     title: String,
-    value: String,
+    value: [String, Number],
   },
 };
 </script>
