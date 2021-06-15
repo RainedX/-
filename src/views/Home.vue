@@ -27,6 +27,30 @@ export default {
     screenData().then(data => {
       this.reportData = data;
     });
+    wordcloud().then(data => {
+      this.wordCloud = data;
+    });
+    mapScatter().then(data => {
+      this.mapData = data;
+    });
+  },
+  methods: {
+    getReportData() {
+      return this.reportData;
+    },
+    getWordCloud() {
+      return this.wordCloud;
+    },
+    getMapData() {
+      return this.mapData;
+    },
+  },
+  provide() {
+    return {
+      getReportData: this.getReportData,
+      getWordCloud: this.getWordCloud,
+      getMapData: this.getMapData,
+    };
   },
   components: {
     TopView,

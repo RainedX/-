@@ -4,9 +4,21 @@ function format(v) {
 }
 
 export default {
+  computed: {
+    reportData() {
+      return this.getReportData()
+    },
+    wordCloud() {
+      return this.getWordCloud()
+    },
+    mapData() {
+      return this.getMapData()
+    }
+  },
   filters: {
     format(v) {
       return format(v)
     }
   },
+  inject: ['getReportData', 'getWordCloud', 'getMapData']
 }
