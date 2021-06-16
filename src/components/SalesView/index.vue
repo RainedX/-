@@ -1,9 +1,6 @@
 <template>
   <div class="sales-view">
-    <el-card
-      shadow="hover"
-      :body-style="{ padding: '0 0 20px 0' }"
-    >
+    <el-card shadow="hover" :body-style="{ padding: '0 0 20px 0' }">
       <template v-slot:header>
         <div class="menu-wrapper">
           <el-menu
@@ -16,10 +13,7 @@
             <el-menu-item index="2">访问量</el-menu-item>
           </el-menu>
           <div class="menu-right">
-            <el-radio-group
-              v-model="radioSelect"
-              size="small"
-            >
+            <el-radio-group v-model="radioSelect" size="small">
               <el-radio-button label="今日" />
               <el-radio-button label="本周" />
               <el-radio-button label="本月" />
@@ -45,14 +39,12 @@
           <div class="sales-view-list">
             <div class="sales-view-title">排行榜</div>
             <div class="list-item-wrapper">
-              <div
-                class="list-item"
-                v-for="item in rankData"
-                :key="item.no"
-              >
-                <div :class="['list-item-no', +item.no <= 3 ? 'top-no' : '']">{{item.no}}</div>
-                <div class="list-item-name">{{item.name}}</div>
-                <div class="list-item-money">{{item.money}}</div>
+              <div class="list-item" v-for="item in rankData" :key="item.no">
+                <div :class="['list-item-no', +item.no <= 3 ? 'top-no' : '']">
+                  {{ item.no }}
+                </div>
+                <div class="list-item-name">{{ item.name }}</div>
+                <div class="list-item-money">{{ item.money }}</div>
               </div>
             </div>
           </div>
@@ -63,7 +55,9 @@
 </template>
 
 <script>
+import commonDataMixin from '@/mixin/commonDataMixin'
 export default {
+  mixins: [commonDataMixin],
   data() {
     return {
       activeIndex: '1',
@@ -100,81 +94,88 @@ export default {
           },
         ],
       },
-      chartOptions: {
+      chartOptions: {},
+    };
+  },
+  computed: {
+    rankData() {
+      return this.activeIndex === '1' ? this.orderRank : this.userRank;
+    },
+  },
+  methods: {
+    onMenuSelect(index) {
+      this.activeIndex = index;
+      if (index === '1') {
+        this.render(this.orderFullYear, this.orderFullYearAxis, '年度销售额');
+      } else {
+        this.render(this.userFullYear, this.userFullYearAxis, '年度用户访问量');
+      }
+    },
+    render(data, axis, title) {
+      this.chartOptions = {
         color: '#2672ff',
         title: {
-          text: '年度销售额',
+          text: title,
           textStyle: {
             fontSize: 12,
-            color: '#666'
+            color: '#666',
           },
           left: 25,
-          top: 20
+          top: 20,
         },
         xAxis: {
           type: 'category',
           axisTick: {
             alignWithLabel: true,
             lineStyle: {
-              color: '#999'
-            }
+              color: '#999',
+            },
           },
           axisLine: {
             lineStyle: {
-              color: '#999'
-            }
+              color: '#999',
+            },
           },
           axisLabel: {
-            color: '#333'
+            color: '#333',
           },
-          data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月','8月', '9月','10月','11月','12月']
+          data: axis,
         },
         yAxis: {
           type: 'value',
           axisLine: {
-            show: false
+            show: false,
           },
           axisTick: {
-            show: false
+            show: false,
           },
           splitLine: {
             lineStyle: {
               type: 'dotted',
-              color: '#eee'
-            }
+              color: '#eee',
+            },
           },
-          data: [100, 200, 300, 400, 500]
+          data: [100, 200, 300, 400, 500],
         },
         grid: {
           top: 70,
           left: 60,
           right: 60,
-          bottom: 50
+          bottom: 50,
         },
         series: [
           {
             type: 'bar',
             barWidth: '35%',
-            data: [400, 80, 200, 320, 380, 310, 220, 150, 80, 200, 120, 290]
-          }
-        ]
-      },
-    };
-  },
-  computed: {
-    rankData() {
-      return [
-        { no: 1, name: '麦当劳', money: '323,234' },
-        { no: 2, name: '麦当劳', money: '323,234' },
-        { no: 3, name: '麦当劳', money: '323,234' },
-        { no: 4, name: '麦当劳', money: '323,234' },
-        { no: 5, name: '麦当劳', money: '323,234' },
-      ];
+            data,
+          },
+        ],
+      };
     },
   },
-  methods: {
-    onMenuSelect(index) {
-      this.activeIndex = index;
+  watch: {
+    orderFullYear() {
+      this.render(this.orderFullYear, this.orderFullYearAxis, '年度销售额');
     },
   },
 };

@@ -40,6 +40,9 @@ export default {
     mapData() {
       return this.getMapData()
     },
+    salesToday() {
+      return wrapperMoney(this.reportData, 'salesToday')
+    },
     salesGrowthLastDay() {
       return wrapperPercentage(this.reportData, 'salesGrowthLastDay')
     },
@@ -90,6 +93,24 @@ export default {
     },
     category2() {
       return wrapperObject(this.reportData, 'category.data2')
+    },
+    orderRank() {
+      return wrapperArray(this.reportData, 'orderRank')
+    },
+    userRank() {
+      return wrapperArray(this.reportData, 'userRank')
+    },
+    orderFullYear() {
+      return wrapperArray(this.reportData, 'orderFullYear')
+    },
+    orderFullYearAxis() {
+      return wrapperArray(this.reportData, 'orderFullYearAxis')
+    },
+    userFullYear() {
+      return wrapperArray(this.reportData, 'userFullYear')
+    },
+    userFullYearAxis() {
+      return wrapperArray(this.reportData, 'userFullYearAxis')
     },
   },
   filters: {

@@ -1,5 +1,5 @@
 <template>
-  <common-card title="累计销售额" value="¥ 32,039,165">
+  <common-card title="累计销售额" :value="salesToday">
     <template>
       <div class="compare-wrapper">
         <div class="compare">
