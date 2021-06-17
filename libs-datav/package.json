@@ -1,0 +1,17 @@
+{
+  "name": "libs-datav",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "rollup -wc rollup.config.dev.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "rollup": "^2.52.0",
+    "rollup-plugin-node-resolve": "^5.2.0"
+  }
+}
