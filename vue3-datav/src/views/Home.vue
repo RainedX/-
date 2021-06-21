@@ -1,7 +1,14 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <icon name="jinrixinzengyonghu" />
+    <Icon name="jinrixinzengyonghu" style="width:80px" />
+    <SvgAnimation />
+    <Container />
+    <CountTo />
+    <FlyBox />
+    <Logo />
+    <Loading />
+    <VueEcharts />
+    <BaseScrollList />
   </div>
 </template>
 
